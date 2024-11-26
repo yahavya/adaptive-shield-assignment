@@ -5,7 +5,7 @@ Repository for the home assessment for AdaptiveShield.
 _INSTRUCTIONS_:
 
 1. Copy the repository to your machine.
-2. Install all dependencies.
+2. Install all dependencies (by running pip install -r requirements).
 3. RUN THE scraper.py FILE. THIS IS CRUCIAL, BECAUSE OTHERWISE YOU WON'T BE ABLE TO SEE THE BEAUTIFUL RESULTS ON THE WEB PAGE.
 4. Run "python -m flask run", this will start the flask application on 127.0.0.1:{port}. Now go to "/" and follow the instructions.
 
