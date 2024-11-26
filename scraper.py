@@ -261,13 +261,9 @@ adjectives_with_animals = {}  # Initialize the result dictionary which will map 
 for key in col_adj_set:  # Iterate over every collateral adjective that we have in the set
     for animal in animal_names_with_collateral_adj:  # Iterate over each animal in the (animal, adjectives) tuple
         adjectives_list = animal[1].split("###")
-        print(adjectives_list)
+        #print(adjectives_list)
         # Break down the adjectives to avoid duplication and incorrectly adding substrings instead of the exact adjectives
 
-        #print("this is the adjectives list ", adjectives_list, " and animal name is ", animal[0])
-
-        #print("we are checking if", key, "is in", adjectives_list, " of animal", animal[0])
-        
         cleaned_adjectives = [re.sub(r'\[.*?\]', '', adj).strip() for adj in adjectives_list]
         
         # Convert key and cleaned adjectives to lowercase for case-insensitive comparison
@@ -285,6 +281,7 @@ for key in col_adj_set:  # Iterate over every collateral adjective that we have 
                     animal[0]
                 )  # Otherwise, add the animal to the proper (key,value) pair.
 
+#print("this is the adjectives with animals ", adjectives_with_animals)
 
 test_get_animals_and_collateral_adjectives()  # Run the test function
 
