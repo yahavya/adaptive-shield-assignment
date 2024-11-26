@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import threading
-import time
+import os
 
 
 url = "https://en.wikipedia.org/wiki/List_of_animal_names"
@@ -105,9 +105,8 @@ def download_images(cleaned_animal_names):
                     img_response = requests.get(img_url)
 
                 if img_response.status_code == 200:
-                    with open(
-                        f"adaptive-shield-assignment/tmp/{img_name}", "wb"
-                    ) as file:
+                    img_path = os.path.join(os.path.dirname(__file__), "tmp", img_name)
+                    with open(img_path, "wb") as file:
                         file.write(img_response.content)
                     # print("saved image successfully")
         except:
@@ -132,7 +131,7 @@ def write_to_file(data, filename):
 
 
 """
-This functiion is for getting html content from the url, parsing it with bs4 and returning a table.
+This function is for getting html content from the url, parsing it with bs4 and returning a table.
 """
 
 
@@ -295,7 +294,7 @@ def test_get_animals_and_collateral_adjectives():
 test_get_animals_and_collateral_adjectives()  # Run the test function
 
 write_to_file(
-    adjectives_with_animals, "RESULT.txt"
+    adjectives_with_animals, "tmp/RESULT.txt"
 )  # Writing the result dictionary to RESULT.txt
 
 cleaned_animal_names = clean_animal_names(
