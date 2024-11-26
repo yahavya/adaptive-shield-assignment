@@ -1,9 +1,64 @@
 from bs4 import BeautifulSoup
-import os
 import requests
 
 
 url = "https://en.wikipedia.org/wiki/List_of_animal_names"
+
+"""
+This function cleans the animal names for easier use in the download_images function
+"""
+
+
+def clean_animal_names(animal_names):
+    for j in range(
+        len(animal_names)
+    ):  # Iterate over every collateral adjective in the list, removing suffix of [83], which is citation. This is a quick fix for preventing duplicates.
+        try:
+            animal_names[j] = animal_names[j].replace("(list)", "")
+            animal_names[j] = animal_names[j].replace("###Also see", "")
+            animal_names[j] = animal_names[j].replace("###See", "")
+            i = animal_names[j].index("[")
+            animal_names[j] = animal_names[j][:i]
+        except (
+            ValueError
+        ) as ve:  # If the index is not found, it means the adjective does not contain "[", and we don't care, just continue
+            continue
+    return animal_names
+
+
+"""
+This function receives a list of animal names and downloads images for each name based on the wikipedia page.
+"""
+
+
+def download_images(animal_names):
+
+    cleaned_animal_names = clean_animal_names(animal_names)
+
+    for name in cleaned_animal_names:
+
+        response = requests.get(f"https://en.wikipedia.org/wiki/{name}")
+
+        print("request to " + f"https://en.wikipedia.org/wiki/{name} suceeded")
+
+        if response.status_code == 200:
+            doc = response.text
+            soup = BeautifulSoup(doc, "html.parser")
+            img_tag = (
+                soup.find("tbody").find("img", {"class": "mw-file-element"}).get("src")
+            )
+
+            print("img tag found", img_tag)
+
+            if img_tag:
+                img_url = "https:" + img_tag
+                img_name = name.replace(" ", "_") + ".jpg"
+                img_response = requests.get(img_url)
+
+            if img_response.status_code == 200:
+                with open(f"adaptive-shield-assignment/tmp/{img_name}", "wb") as file:
+                    file.write(img_response.content)
+                print("saved image successfully")
 
 
 def write_to_file(data, filename):
@@ -111,6 +166,7 @@ animal_names_with_collateral_adj, collateral_adj, animal_names = (
 )  # Get the animals and their collateral adjectives
 
 # print("THESE ARE ANIMAL NAMES", animal_names)
+# print("THESE ARE COLLATERAL ADJECTIVES", collateral_adj)
 
 collateral_adj_split = [
     adj.split("###") for adj in collateral_adj
@@ -175,5 +231,7 @@ write_to_file(
     adjectives_with_animals, "ANIMAL_TEST.txt"
 )  # Outputting the result dictionary
 
+download_images(animal_names)
+print("done!")
 
 # print("All tests passed!")  # If all tests pass, print this message
