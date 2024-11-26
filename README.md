@@ -1,7 +1,3 @@
-Here’s a revised version of your README file with a more professional tone and structure:
-
----
-
 # Adaptive Shield Assignment
 
 This repository contains the home assessment for Adaptive Shield. It demonstrates the functionality of a web scraper and a Flask-based application to map collateral adjectives to animals, presenting the results in a simple UI.
@@ -69,8 +65,4 @@ Below is a preview of the user interface:
 
 ---
 
-Feel free to contact me for any clarifications or additional requirements. Happy exploring!
-
----
-
-This version organizes the content into distinct sections, uses Markdown conventions effectively, and maintains a professional yet approachable tone.
+Feel free to contact me for any clarifications or additional requirements.
