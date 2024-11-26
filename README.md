@@ -1,6 +1,6 @@
 # Adaptive Shield Assignment
 
-This repository contains the home assessment for Adaptive Shield. It demonstrates the functionality of a web scraper and a Flask-based application to map collateral adjectives to animals, presenting the results in a simple UI.
+This repository contains the home assessment for Adaptive Shield. It demonstrates the functionality of a web scraper and a Flask-based application to map collateral adjectives to animals, presenting the results in a simple UI. Hope you guys find it fun!
 
 ---
 
@@ -61,7 +61,7 @@ Ensure you have Python installed on your machine. You can install the required d
 
 Below is a preview of the user interface:
 
-<img width="1399" alt="Preview of the UI" src="https://github.com/user-attachments/assets/5a3ee928-fcc9-4138-bbbf-ef3b9ea661e6">
+![image](https://github.com/user-attachments/assets/040c3e32-81af-4cc7-a857-77a5212d7dd1)
 
 ---
 
