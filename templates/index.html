@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,22 +18,27 @@
             height: 100vh;
             flex-direction: column;
         }
+
         h1 {
             color: #4a90e2;
         }
+
         p {
             font-size: 1.2em;
         }
+
         a {
             color: #4a90e2;
             text-decoration: none;
             border-bottom: 1px solid #4a90e2;
         }
+
         a:hover {
             color: #333;
             border-bottom: 1px solid #333;
         }
-         button {
+
+        button {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 1em;
@@ -43,21 +49,36 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         button:hover {
             background-color: #357ab8;
         }
+
+        #animal-display {
+            margin-top: 20px;
+            text-align: center;
+        }
+
         #animal-display img {
             max-width: 200px;
             max-height: 200px;
-            margin-top: 20px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #animal-display h2 {
+            color: #4a90e2;
+            margin-bottom: 10px;
         }
     </style>
 </head>
+
 <body>
     <h1>Welcome to the Animal Image Viewer</h1>
-    <p>Go to /tmp/ENTER_ANIMAL.jpg to see a picture of that animal! For example, go to <a href="/tmp/Ant.jpg">tmp/Ant.jpg</a> to see an Ant</p>
+    <p>Go to /tmp/ENTER_ANIMAL.jpg to see a picture of that animal! For example, go to <a
+            href="/tmp/Ant.jpg">tmp/Ant.jpg</a> to see an Ant</p>
     <p>Go to <a href="/RESULT.txt">tmp/RESULT.txt</a> to see the results of the mappings.</p>
-    <button onclick="showRandomAnimal()">Feeling lucky? Random animal</button>
+    <button onclick="showRandomAnimal()">Show Random Animal</button>
     <div id="animal-display">
         <!-- Random animal image and name will be displayed here -->
     </div>
@@ -66,11 +87,10 @@
     <script>
         const animals = [
             { name: 'Ant', image: '/tmp/Ant.jpg' },
-            { name: 'Fish', image: '/tmp/Fish.jpg' },
-            { name: 'Elephant', image: 'tmp/Elephant.jpg'},
-            { name: 'Aardvark', image: '/tmp/Aardvark.jpg'},
+            { name: 'Cheetah', image: '/tmp/Cheetah.jpg' },
+            { name: 'Elephant', image: 'tmp/Elephant.jpg' },
+            { name: 'Aardvark', image: '/tmp/Aardvark.jpg' },
             { name: 'Baboon', image: '/tmp/Baboon.jpg' },
-            {name: 'Bee', image: '/tmp/Bee.jpg'}
 
         ];
 
@@ -85,4 +105,5 @@
         }
     </script>
 </body>
+
 </html>
