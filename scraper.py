@@ -155,7 +155,7 @@ def parse_collateral_adjectives(collateral_adj_split):
     adj_joined_set = set(adj_joined_list)  # Convert list to a set to remove duplicates
     adj_joined_set.remove("")  # Get rid of the "" key because it spams the results
 
-    print("this is the adjoined set ", adj_joined_set) # Looks good
+    #print("this is the adjoined set ", adj_joined_set) # Looks good
 
     return adj_joined_set
 
