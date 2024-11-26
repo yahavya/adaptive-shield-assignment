@@ -1,8 +1,15 @@
 from bs4 import BeautifulSoup
+import os
 import requests
 
 
 url = "https://en.wikipedia.org/wiki/List_of_animal_names"
+
+
+def write_to_file(data, filename):
+    with open(filename, "w", newline="") as file:
+        file.write(str(data))
+
 
 """
 Function for getting html content from the url, parsing it with bs4 and returning a table.
@@ -103,6 +110,8 @@ animal_names_with_collateral_adj, collateral_adj, animal_names = (
     get_animals_and_collateral_adjectives()
 )  # Get the animals and their collateral adjectives
 
+# print("THESE ARE ANIMAL NAMES", animal_names)
+
 collateral_adj_split = [
     adj.split("###") for adj in collateral_adj
 ]  # This is the first step in parsing the collateral adjectives
@@ -140,4 +149,31 @@ for (
                 )  # Otherwise, add the animal to the proper (key,value) pair.
 
 
-print(adjectives_with_animals)  # Outputting the result dictionary
+"""
+This function implements some basic tests for the result.
+"""
+
+
+def test_get_animals_and_collateral_adjectives():
+
+    assert len(animal_names) == 231, "The number of animals is not as expected"
+
+    assert (
+        len(adjectives_with_animals["canine"]) == 2
+    ), "The 'canine' adjective is not mapped to the correct animals"
+    assert (
+        len(adjectives_with_animals["cervine"]) == 3
+    ), "The 'cervine' adjective is not mapped to the correct animals"
+    assert (
+        len(adjectives_with_animals["musteline"]) == 6
+    ), "The 'musteline' adjective is not mapped to the correct animals"
+
+
+test_get_animals_and_collateral_adjectives()  # Run the test function
+
+write_to_file(
+    adjectives_with_animals, "ANIMAL_TEST.txt"
+)  # Outputting the result dictionary
+
+
+# print("All tests passed!")  # If all tests pass, print this message
