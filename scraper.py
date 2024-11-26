@@ -13,42 +13,23 @@ This function makes use of the download_images function, with 4 threads running 
 
 def download_images_with_threading(cleaned_animal_names):
     print("Starting to scrape images from Wikipedia")
-    t1 = threading.Thread(
-        target=download_images,
-        args=[cleaned_animal_names[: len(cleaned_animal_names) // 4]],
-    )
-    t2 = threading.Thread(
-        target=download_images,
-        args=[
-            cleaned_animal_names[
-                len(cleaned_animal_names) // 4 : 2 * len(cleaned_animal_names) // 4
-            ]
-        ],
-    )
-    t3 = threading.Thread(
-        target=download_images,
-        args=[
-            cleaned_animal_names[
-                2
-                * len(cleaned_animal_names)
-                // 4 : (3 * len(cleaned_animal_names) // 4)
-            ]
-        ],
-    )
-    t4 = threading.Thread(
-        target=download_images,
-        args=[cleaned_animal_names[(3 * len(cleaned_animal_names) // 4) :]],
-    )
+    num_threads = 4
+    threads = []
+    chunk_size = len(cleaned_animal_names) // num_threads
 
-    t1.start()
-    t2.start()
-    t3.start()
-    t4.start()
+    for i in range(num_threads):
+        start_index = i * chunk_size
+        # Ensure the last thread takes any remaining items that are left so we don't leave anything behind.
+        end_index = (i + 1) * chunk_size if i < num_threads - 1 else len(cleaned_animal_names)
+        thread = threading.Thread(
+            target=download_images,
+            args=[cleaned_animal_names[start_index:end_index]],
+        )
+        threads.append(thread)
+        thread.start()
 
-    t1.join()
-    t2.join()
-    t3.join()
-    t4.join()
+    for thread in threads:
+        thread.join()
 
 
 """
