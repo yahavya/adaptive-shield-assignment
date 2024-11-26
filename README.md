@@ -17,6 +17,6 @@ Some things you should take note of:
 - Images will be saved to the /tmp directory. I implemented the image downloading function to use 4 threads. The (honest) reason is that I tried 2 threads and it felt too slow. Could ramp it up if need be but this works nicely for now.
 - There are animals that have no collateral adjective specified. I have purposely decided to leave them out of the mapping, since leaving them as unmapped seems contradictory to the task's objective in my opinion, but this is a personal preference and can be done otherwise if need be.
 
-A preview of what the UI looks like (very basic stuff):
+A preview of what the UI looks like:
 
 <img width="1399" alt="image" src="https://github.com/user-attachments/assets/5a3ee928-fcc9-4138-bbbf-ef3b9ea661e6">

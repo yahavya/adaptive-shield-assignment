@@ -220,6 +220,36 @@ def get_animals_and_collateral_adjectives():
     return animal_names_with_collateral_adj, collateral_adj, animal_names
 
 
+"""
+This function implements some basic tests for the result.
+"""
+
+def test_get_animals_and_collateral_adjectives():
+
+    assert len(animal_names) == 231, "The number of animals is not as expected"
+
+    assert (
+        len(adjectives_with_animals["canine"]) == 2
+    ), "The 'canine' adjective is not mapped to the correct animals"
+    assert (
+        len(adjectives_with_animals["cervine"]) == 3
+    ), "The 'cervine' adjective is not mapped to the correct animals"
+    assert (
+        len(adjectives_with_animals["musteline"]) == 6
+    ), "The 'musteline' adjective is not mapped to the correct animals"
+
+def test_download_images():
+    # This is a basic test to ensure the function runs without errors.
+    # You might want to mock requests.get to avoid actual HTTP requests during testing.
+    test_data = ["Bee", "Fish"]
+    download_images(test_data)
+    # Check if images are downloaded in the tmp directory
+    for name in test_data:
+        img_name = name.replace(" ", "_") + ".jpg"
+        img_path = os.path.join(os.path.dirname(__file__), "tmp", img_name)
+        assert os.path.exists(img_path), f"Image for {name} was not downloaded"
+    print("Downloaded images test PASSED")
+
 ### --------------------------------------------------------------------------------------------------------------------------------------- ###
 
 url = "https://en.wikipedia.org/wiki/List_of_animal_names"
@@ -271,27 +301,9 @@ for (
                 )  # Otherwise, add the animal to the proper (key,value) pair.
 
 
-"""
-This function implements some basic tests for the result.
-"""
-
-
-def test_get_animals_and_collateral_adjectives():
-
-    assert len(animal_names) == 231, "The number of animals is not as expected"
-
-    assert (
-        len(adjectives_with_animals["canine"]) == 2
-    ), "The 'canine' adjective is not mapped to the correct animals"
-    assert (
-        len(adjectives_with_animals["cervine"]) == 3
-    ), "The 'cervine' adjective is not mapped to the correct animals"
-    assert (
-        len(adjectives_with_animals["musteline"]) == 6
-    ), "The 'musteline' adjective is not mapped to the correct animals"
-
-
 test_get_animals_and_collateral_adjectives()  # Run the test function
+
+test_download_images()  # Run the test function
 
 write_to_file(
     adjectives_with_animals, "tmp/RESULT.txt"
