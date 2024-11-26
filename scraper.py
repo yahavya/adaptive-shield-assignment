@@ -7,7 +7,7 @@ import time
 url = "https://en.wikipedia.org/wiki/List_of_animal_names"
 
 """
-This function cleans the animal names for easier use in the download_images function
+This function makes use of the download_images function, with 4 threads running simaltaneously, in order to ensure images are downloaded quickly.
 """
 
 
@@ -50,6 +50,11 @@ def download_images_with_threading(cleaned_animal_names):
     t4.join()
 
 
+"""
+This function cleans the animal names for easier use in the download_images function
+"""
+
+
 def clean_animal_names(animal_names):
     for j in range(
         len(animal_names)
@@ -69,7 +74,7 @@ def clean_animal_names(animal_names):
 
 
 """
-This function receives a list of animal names and downloads images for each name based on the wikipedia page.
+This function receives a list of animal names and downloads images for each animal based on the wikipedia page.
 """
 
 
@@ -111,6 +116,7 @@ def download_images(cleaned_animal_names):
 
 """
 This function takes the expected result data (dictionary of collateral adjectives each mapped to a list of animal names)
+and writes it to a file.
 """
 
 
@@ -120,7 +126,7 @@ def write_to_file(data, filename):
 
 
 """
-Function for getting html content from the url, parsing it with bs4 and returning a table.
+This functiion is for getting html content from the url, parsing it with bs4 and returning a table.
 """
 
 
@@ -138,7 +144,8 @@ def get_html_content(url):
 
 
 """
-This function receives a list of collateral adjectives and returns a set of unique adjectives.
+This function receives a list of collateral adjectives and returns a set of unique adjectives, 
+that will be used for looking up which collateral adjectives appear on which animals.
 """
 
 
@@ -165,7 +172,7 @@ def parse_collective_adjectives(collateral_adj_split):
 
 
 """
-This function receives the table data and returns a list of lists.
+This function receives the table data and returns the table as a list of lists.
 """
 
 
@@ -285,7 +292,9 @@ write_to_file(
     adjectives_with_animals, "RESULT.txt"
 )  # Writing the result dictionary to RESULT.txt
 
-cleaned_animal_names = clean_animal_names(animal_names)
+cleaned_animal_names = clean_animal_names(
+    animal_names
+)  # Clean the animal names of suffixes such as ###, [citation], etc.
 
 download_images_with_threading(cleaned_animal_names)
 
