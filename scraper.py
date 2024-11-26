@@ -78,7 +78,6 @@ def download_images(cleaned_animal_names):
                     .get("src")
                 )
 
-                # print("img tag found", img_tag)
 
                 if img_tag:
                     img_url = "https:" + img_tag
@@ -135,7 +134,7 @@ that will be used for looking up which collateral adjectives appear on which ani
 """
 
 
-def parse_collective_adjectives(collateral_adj_split):
+def parse_collateral_adjectives(collateral_adj_split):
     adj_joined_list = []
     for lst in collateral_adj_split:
         adj_joined_list.extend(lst)
@@ -249,9 +248,9 @@ collateral_adj_split = [
     adj.split("###") for adj in collateral_adj
 ]  # This is the first step in parsing the collateral adjectives
 
-col_adj_set = parse_collective_adjectives(
+col_adj_set = parse_collateral_adjectives(
     collateral_adj_split
-)  # Send the collective adjectives for parsing, returning only real and unique adjectives in a set ("remove -, '', etc.")
+)  # Send the collateral adjectives for parsing, returning only real and unique adjectives in a set ("remove -, '', etc.")
 
 adjectives_with_animals = (
     dict()
@@ -259,7 +258,7 @@ adjectives_with_animals = (
 
 for (
     key
-) in col_adj_set:  # Iterate over every collective adjective that we have in the set
+) in col_adj_set:  # Iterate over every collateral adjective that we have in the set
     for (
         animal
     ) in (
