@@ -15,4 +15,4 @@ Some things you should take note of:
 
 - The result mapping of collateral adjectives to animals will be found in the RESULT.txt file.
 - Images will be saved to the /tmp directory. I implemented the image downloading function to use 4 threads. The (honest) reason is that I tried 2 threads and it felt too slow. Could ramp it up if need be but this works nicely for now.
-- There are animals that have no collateral adjective specified. I have purposely decided to leave them out of the mapping, as this leaving them as unmapped seems contradictory to the task's objective, but this is a personal preference and can be done otherwise if need be.
+- There are animals that have no collateral adjective specified. I have purposely decided to leave them out of the mapping, since leaving them as unmapped seems contradictory to the task's objective in my opinion, but this is a personal preference and can be done otherwise if need be.

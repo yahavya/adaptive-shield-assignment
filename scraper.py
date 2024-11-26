@@ -12,6 +12,7 @@ This function makes use of the download_images function, with 4 threads running 
 
 
 def download_images_with_threading(cleaned_animal_names):
+    print("Starting to scrape images from Wikipedia")
     t1 = threading.Thread(
         target=download_images,
         args=[cleaned_animal_names[: len(cleaned_animal_names) // 4]],
@@ -79,7 +80,7 @@ This function receives a list of animal names and downloads images for each anim
 
 
 def download_images(cleaned_animal_names):
-    print("Starting to scrape images from Wikipedia")
+    error_count = 0
     for name in cleaned_animal_names:
         try:
 
@@ -110,8 +111,13 @@ def download_images(cleaned_animal_names):
                         file.write(img_response.content)
                     # print("saved image successfully")
         except:
-            print(f"Error in getting image for {name}")
+            print(
+                f"Error in getting image for {name}, investigate URL at: "
+                f"https://en.wikipedia.org/wiki/{name}"
+            )
+            error_count += 1
             continue
+    print(f"Error in total of {error_count} images")
 
 
 """

@@ -32,11 +32,56 @@
             color: #333;
             border-bottom: 1px solid #333;
         }
+         button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #4a90e2;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #357ab8;
+        }
+        #animal-display img {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Welcome to the Animal Image Viewer</h1>
     <p>Go to /tmp/ENTER_ANIMAL.jpg to see a picture of that animal! For example, go to <a href="/tmp/Ant.jpg">tmp/Ant.jpg</a> to see an Ant</p>
-    <p>Go to <a href="/tmp/RESULT.txt">tmp/RESULT.txt</a> to see the results of the mappings.</p>
+    <p>Go to <a href="/RESULT.txt">tmp/RESULT.txt</a> to see the results of the mappings.</p>
+    <button onclick="showRandomAnimal()">Show Random Animal</button>
+    <div id="animal-display">
+        <!-- Random animal image and name will be displayed here -->
+    </div>
+    <h3>Made by <a href="https://github.com/yahavya">Yaron Yahav</a></h3>
+
+    <script>
+        const animals = [
+            { name: 'Ant', image: '/tmp/Ant.jpg' },
+            { name: 'Cheetah', image: '/tmp/Cheetah.jpg' },
+            { name: 'Elephant', image: 'tmp/Elephant.jpg'},
+            { name: 'Aardvark', image: '/tmp/Aardvark.jpg'},
+            { name: 'Baboon', image: '/tmp/Baboon.jpg' },
+
+        ];
+
+        function showRandomAnimal() {
+            const randomIndex = Math.floor(Math.random() * animals.length);
+            const animal = animals[randomIndex];
+            const animalDisplay = document.getElementById('animal-display');
+            animalDisplay.innerHTML = `
+                    <h2>${animal.name}</h2>
+                    <img src="${animal.image}" alt="${animal.name}">
+                `;
+        }
+    </script>
 </body>
 </html>
