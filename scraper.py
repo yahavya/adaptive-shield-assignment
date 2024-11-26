@@ -2,6 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 import threading
 import os
+import re
+
 
 
 url = "https://en.wikipedia.org/wiki/List_of_animal_names"
@@ -153,6 +155,8 @@ def parse_collateral_adjectives(collateral_adj_split):
     adj_joined_set = set(adj_joined_list)  # Convert list to a set to remove duplicates
     adj_joined_set.remove("")  # Get rid of the "" key because it spams the results
 
+    print("this is the adjoined set ", adj_joined_set) # Looks good
+
     return adj_joined_set
 
 
@@ -252,24 +256,25 @@ col_adj_set = parse_collateral_adjectives(
     collateral_adj_split
 )  # Send the collateral adjectives for parsing, returning only real and unique adjectives in a set ("remove -, '', etc.")
 
-adjectives_with_animals = (
-    dict()
-)  # Initialize the result dictionary which will map adjectives to their proper animals
+adjectives_with_animals = {}  # Initialize the result dictionary which will map adjectives to their proper animals
 
-for (
-    key
-) in col_adj_set:  # Iterate over every collateral adjective that we have in the set
-    for (
-        animal
-    ) in (
-        animal_names_with_collateral_adj
-    ):  # Iterate over each animal in the (animal, adjectives) tuple
-        adjectives_list = animal[1].split(
-            "###"
-        )  # Break down the adjectives to avoid duplication and incorrectly adding substrings instead of the exact adjectives
-        if (
-            key in adjectives_list
-        ):  # Check if the adjective is in one of the animal's adjectives
+for key in col_adj_set:  # Iterate over every collateral adjective that we have in the set
+    for animal in animal_names_with_collateral_adj:  # Iterate over each animal in the (animal, adjectives) tuple
+        adjectives_list = animal[1].split("###")
+        print(adjectives_list)
+        # Break down the adjectives to avoid duplication and incorrectly adding substrings instead of the exact adjectives
+
+        #print("this is the adjectives list ", adjectives_list, " and animal name is ", animal[0])
+
+        #print("we are checking if", key, "is in", adjectives_list, " of animal", animal[0])
+        
+        cleaned_adjectives = [re.sub(r'\[.*?\]', '', adj).strip() for adj in adjectives_list]
+        
+        # Convert key and cleaned adjectives to lowercase for case-insensitive comparison
+        key_lower = key.lower()
+        cleaned_adjectives_lower = [adj.lower() for adj in cleaned_adjectives]
+        
+        if key_lower in cleaned_adjectives_lower:  # Check if the adjective is in one of the animal's adjectives            
 
             if key not in adjectives_with_animals:
                 adjectives_with_animals[key] = [
