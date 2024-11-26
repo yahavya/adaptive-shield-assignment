@@ -65,8 +65,4 @@ Below is a preview of the user interface:
 
 ---
 
-Feel free to contact me for any clarifications or additional requirements. Happy exploring!
-
----
-
-This version organizes the content into distinct sections, uses Markdown conventions effectively, and maintains a professional yet approachable tone.
+Feel free to contact me for any clarifications or additional requirements.
