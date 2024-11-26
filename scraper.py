@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
+import threading
+import time
 
 
 url = "https://en.wikipedia.org/wiki/List_of_animal_names"
@@ -7,6 +9,45 @@ url = "https://en.wikipedia.org/wiki/List_of_animal_names"
 """
 This function cleans the animal names for easier use in the download_images function
 """
+
+
+def download_images_with_threading(cleaned_animal_names):
+    t1 = threading.Thread(
+        target=download_images,
+        args=[cleaned_animal_names[: len(cleaned_animal_names) // 4]],
+    )
+    t2 = threading.Thread(
+        target=download_images,
+        args=[
+            cleaned_animal_names[
+                len(cleaned_animal_names) // 4 : 2 * len(cleaned_animal_names) // 4
+            ]
+        ],
+    )
+    t3 = threading.Thread(
+        target=download_images,
+        args=[
+            cleaned_animal_names[
+                2
+                * len(cleaned_animal_names)
+                // 4 : (3 * len(cleaned_animal_names) // 4)
+            ]
+        ],
+    )
+    t4 = threading.Thread(
+        target=download_images,
+        args=[cleaned_animal_names[(3 * len(cleaned_animal_names) // 4) :]],
+    )
+
+    t1.start()
+    t2.start()
+    t3.start()
+    t4.start()
+
+    t1.join()
+    t2.join()
+    t3.join()
+    t4.join()
 
 
 def clean_animal_names(animal_names):
@@ -17,6 +58,7 @@ def clean_animal_names(animal_names):
             animal_names[j] = animal_names[j].replace("(list)", "")
             animal_names[j] = animal_names[j].replace("###Also see", "")
             animal_names[j] = animal_names[j].replace("###See", "")
+            animal_names[j] = animal_names[j].replace("See", "")
             i = animal_names[j].index("[")
             animal_names[j] = animal_names[j][:i]
         except (
@@ -31,34 +73,45 @@ This function receives a list of animal names and downloads images for each name
 """
 
 
-def download_images(animal_names):
-
-    cleaned_animal_names = clean_animal_names(animal_names)
-
+def download_images(cleaned_animal_names):
+    print("Starting to scrape images from Wikipedia")
     for name in cleaned_animal_names:
+        try:
 
-        response = requests.get(f"https://en.wikipedia.org/wiki/{name}")
+            response = requests.get(f"https://en.wikipedia.org/wiki/{name}")
 
-        print("request to " + f"https://en.wikipedia.org/wiki/{name} suceeded")
+            # print("request to " + f"https://en.wikipedia.org/wiki/{name} suceeded")
 
-        if response.status_code == 200:
-            doc = response.text
-            soup = BeautifulSoup(doc, "html.parser")
-            img_tag = (
-                soup.find("tbody").find("img", {"class": "mw-file-element"}).get("src")
-            )
+            if response.status_code == 200:
+                doc = response.text
+                soup = BeautifulSoup(doc, "html.parser")
+                img_tag = (
+                    soup.find("tbody")
+                    .find("img", {"class": "mw-file-element"})
+                    .get("src")
+                )
 
-            print("img tag found", img_tag)
+                # print("img tag found", img_tag)
 
-            if img_tag:
-                img_url = "https:" + img_tag
-                img_name = name.replace(" ", "_") + ".jpg"
-                img_response = requests.get(img_url)
+                if img_tag:
+                    img_url = "https:" + img_tag
+                    img_name = name.replace(" ", "_") + ".jpg"
+                    img_response = requests.get(img_url)
 
-            if img_response.status_code == 200:
-                with open(f"adaptive-shield-assignment/tmp/{img_name}", "wb") as file:
-                    file.write(img_response.content)
-                print("saved image successfully")
+                if img_response.status_code == 200:
+                    with open(
+                        f"adaptive-shield-assignment/tmp/{img_name}", "wb"
+                    ) as file:
+                        file.write(img_response.content)
+                    # print("saved image successfully")
+        except:
+            print(f"Error in getting image for {name}")
+            continue
+
+
+"""
+This function takes the expected result data (dictionary of collateral adjectives each mapped to a list of animal names)
+"""
 
 
 def write_to_file(data, filename):
@@ -112,23 +165,23 @@ def parse_collective_adjectives(collateral_adj_split):
 
 
 """
-This function receives the table data and returns a list of lists
+This function receives the table data and returns a list of lists.
 """
 
 
-def get_data_from_table(tableData):
+def get_data_from_table(table_data):
 
     delimiter = "###"  # Add a delimiter to separate collateral adjectives
-    for row in tableData:
+    for row in table_data:
         for space in row.findAll("br"):
             space.replaceWith(
                 delimiter
             )  # Replace <br> tags with delimiter for easier parsing, not necessarily the best way to go, but easy and gets the job done
-    tableData = [
-        [td.text for td in row.find_all("td")] for row in tableData
+    table_data = [
+        [td.text for td in row.find_all("td")] for row in table_data
     ]  # Get data from table in lists format
 
-    return tableData
+    return table_data
 
 
 """
@@ -155,18 +208,19 @@ def get_animals_and_collateral_adjectives():
     return animal_names_with_collateral_adj, collateral_adj, animal_names
 
 
-tableData = get_html_content(
+### --------------------------------------------------------------------------------------------------------------------------------------- ###
+
+url = "https://en.wikipedia.org/wiki/List_of_animal_names"
+
+table_data = get_html_content(
     url
 )  # Use bs4 to parse the HTML content and return a table
 
-parsedTable = get_data_from_table(tableData)  # Extracting the data from the table
+parsedTable = get_data_from_table(table_data)  # Extracting the data from the table
 
 animal_names_with_collateral_adj, collateral_adj, animal_names = (
     get_animals_and_collateral_adjectives()
 )  # Get the animals and their collateral adjectives
-
-# print("THESE ARE ANIMAL NAMES", animal_names)
-# print("THESE ARE COLLATERAL ADJECTIVES", collateral_adj)
 
 collateral_adj_split = [
     adj.split("###") for adj in collateral_adj
@@ -228,10 +282,13 @@ def test_get_animals_and_collateral_adjectives():
 test_get_animals_and_collateral_adjectives()  # Run the test function
 
 write_to_file(
-    adjectives_with_animals, "ANIMAL_TEST.txt"
-)  # Outputting the result dictionary
+    adjectives_with_animals, "RESULT.txt"
+)  # Writing the result dictionary to RESULT.txt
 
-download_images(animal_names)
-print("done!")
+cleaned_animal_names = clean_animal_names(animal_names)
+
+download_images_with_threading(cleaned_animal_names)
+
+print("Done downloading images!")
 
 # print("All tests passed!")  # If all tests pass, print this message
