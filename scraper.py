@@ -5,7 +5,6 @@ import os
 import re
 
 
-
 url = "https://en.wikipedia.org/wiki/List_of_animal_names"
 
 """
@@ -19,10 +18,14 @@ def download_images_with_threading(cleaned_animal_names):
     threads = []
     chunk_size = len(cleaned_animal_names) // num_threads
 
+    
+
     for i in range(num_threads):
         start_index = i * chunk_size
         # Ensure the last thread takes any remaining items that are left so we don't leave anything behind.
-        end_index = (i + 1) * chunk_size if i < num_threads - 1 else len(cleaned_animal_names)
+        end_index = (
+            (i + 1) * chunk_size if i < num_threads - 1 else len(cleaned_animal_names)
+        )
         thread = threading.Thread(
             target=download_images,
             args=[cleaned_animal_names[start_index:end_index]],
@@ -48,6 +51,7 @@ def clean_animal_names(animal_names):
             animal_names[j] = animal_names[j].replace("###Also see", "")
             animal_names[j] = animal_names[j].replace("###See", "")
             animal_names[j] = animal_names[j].replace("See", "")
+            animal_names[j] = animal_names[j].replace("see", "")
             i = animal_names[j].index("[")
             animal_names[j] = animal_names[j][:i]
         except (
@@ -64,7 +68,13 @@ This function receives a list of animal names and downloads images for each anim
 
 def download_images(cleaned_animal_names):
     error_count = 0
-    for name in cleaned_animal_names:
+    # Some slight cleanup changes specifically for the download_images function.
+
+    cleaned_animal_names = [name.lower().replace(" ", "_").replace("/", "_") for name in cleaned_animal_names]
+
+    refined_animal_names = [re.sub(r"###.*", "", name) for name in cleaned_animal_names]
+
+    for name in refined_animal_names:
         try:
 
             response = requests.get(f"https://en.wikipedia.org/wiki/{name}")
@@ -72,6 +82,7 @@ def download_images(cleaned_animal_names):
             # print("request to " + f"https://en.wikipedia.org/wiki/{name} suceeded")
 
             if response.status_code == 200:
+
                 doc = response.text
                 soup = BeautifulSoup(doc, "html.parser")
                 img_tag = (
@@ -79,18 +90,37 @@ def download_images(cleaned_animal_names):
                     .find("img", {"class": "mw-file-element"})
                     .get("src")
                 )
+            else:
+                print(
+                    f"Error in getting image for {name} (response code != 200) , investigate URL at: "
+                    f"https://en.wikipedia.org/wiki/{name}"
+                )
+                error_count += 1
 
+            if img_tag:
+                # print("request to " + f"https://en.wikipedia.org/wiki/{name} suceeded")
+                img_url = "https:" + img_tag
+                img_name = name.replace(" ", "_") + ".jpg"
+                img_response = requests.get(img_url)
 
-                if img_tag:
-                    img_url = "https:" + img_tag
-                    img_name = name.replace(" ", "_") + ".jpg"
-                    img_response = requests.get(img_url)
+            else:
+                print(
+                    f"Error in getting image for {name} (response code != 200) , investigate URL at: "
+                    f"https://en.wikipedia.org/wiki/{name}"
+                )
+                error_count += 1
 
-                if img_response.status_code == 200:
-                    img_path = os.path.join(os.path.dirname(__file__), "tmp", img_name)
-                    with open(img_path, "wb") as file:
-                        file.write(img_response.content)
-                    # print("saved image successfully")
+            if img_response.status_code == 200:
+                img_path = os.path.join(os.path.dirname(__file__), "tmp", img_name)
+                with open(img_path, "wb") as file:
+                    file.write(img_response.content)
+                # print("saved image successfully")
+            else:
+                print(
+                    f"Image response failed {img_response.status_code} for {name} "
+                    f"Error in getting image for {name} (problem writing file)"
+                )
+                error_count += 1
         except:
             print(
                 f"Error in getting image for {name}, investigate URL at: "
@@ -155,7 +185,7 @@ def parse_collateral_adjectives(collateral_adj_split):
     adj_joined_set = set(adj_joined_list)  # Convert list to a set to remove duplicates
     adj_joined_set.remove("")  # Get rid of the "" key because it spams the results
 
-    #print("this is the adjoined set ", adj_joined_set) # Looks good
+    # print("this is the adjoined set ", adj_joined_set) # Looks good
 
     return adj_joined_set
 
@@ -208,6 +238,7 @@ def get_animals_and_collateral_adjectives():
 This function implements some basic tests for the result.
 """
 
+
 def test_get_animals_and_collateral_adjectives():
 
     assert len(animal_names) == 231, "The number of animals is not as expected"
@@ -222,6 +253,7 @@ def test_get_animals_and_collateral_adjectives():
         len(adjectives_with_animals["musteline"]) == 6
     ), "The 'musteline' adjective is not mapped to the correct animals"
 
+
 def test_download_images():
     # This is a basic test to ensure the function runs without errors.
     # You might want to mock requests.get to avoid actual HTTP requests during testing.
@@ -233,6 +265,7 @@ def test_download_images():
         img_path = os.path.join(os.path.dirname(__file__), "tmp", img_name)
         assert os.path.exists(img_path), f"Image for {name} was not downloaded"
     print("Downloaded images test PASSED")
+
 
 ### --------------------------------------------------------------------------------------------------------------------------------------- ###
 
@@ -256,21 +289,33 @@ col_adj_set = parse_collateral_adjectives(
     collateral_adj_split
 )  # Send the collateral adjectives for parsing, returning only real and unique adjectives in a set ("remove -, '', etc.")
 
-adjectives_with_animals = {}  # Initialize the result dictionary which will map adjectives to their proper animals
+adjectives_with_animals = (
+    {}
+)  # Initialize the result dictionary which will map adjectives to their proper animals
 
-for key in col_adj_set:  # Iterate over every collateral adjective that we have in the set
-    for animal in animal_names_with_collateral_adj:  # Iterate over each animal in the (animal, adjectives) tuple
+for (
+    key
+) in col_adj_set:  # Iterate over every collateral adjective that we have in the set
+    for (
+        animal
+    ) in (
+        animal_names_with_collateral_adj
+    ):  # Iterate over each animal in the (animal, adjectives) tuple
         adjectives_list = animal[1].split("###")
-        #print(adjectives_list)
+        # print(adjectives_list)
         # Break down the adjectives to avoid duplication and incorrectly adding substrings instead of the exact adjectives
 
-        cleaned_adjectives = [re.sub(r'\[.*?\]', '', adj).strip() for adj in adjectives_list]
-        
+        cleaned_adjectives = [
+            re.sub(r"\[.*?\]", "", adj).strip() for adj in adjectives_list
+        ]
+
         # Convert key and cleaned adjectives to lowercase for case-insensitive comparison
         key_lower = key.lower()
         cleaned_adjectives_lower = [adj.lower() for adj in cleaned_adjectives]
-        
-        if key_lower in cleaned_adjectives_lower:  # Check if the adjective is in one of the animal's adjectives            
+
+        if (
+            key_lower in cleaned_adjectives_lower
+        ):  # Check if the adjective is in one of the animal's adjectives
 
             if key not in adjectives_with_animals:
                 adjectives_with_animals[key] = [
@@ -281,7 +326,7 @@ for key in col_adj_set:  # Iterate over every collateral adjective that we have 
                     animal[0]
                 )  # Otherwise, add the animal to the proper (key,value) pair.
 
-#print("this is the adjectives with animals ", adjectives_with_animals)
+# print("this is the adjectives with animals ", adjectives_with_animals)
 
 test_get_animals_and_collateral_adjectives()  # Run the test function
 
