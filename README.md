@@ -18,7 +18,7 @@ Ensure you have Python installed on your machine. You can install the required d
 
    ```bash
    git clone <repository-url>
-   cd adaptive-shield-assignment
+   cd animal-scraping-assignment
    ```
 
 2. Install the necessary dependencies:
